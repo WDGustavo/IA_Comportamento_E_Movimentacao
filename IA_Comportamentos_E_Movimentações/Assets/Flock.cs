@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Flock : MonoBehaviour
 {   //onde sera colocado o flockmanager
-    public FlockingManager myManager;
+    public FlockManager myManager;
     //sua velocidade
     float speed;
     bool turning = false;
@@ -21,18 +21,27 @@ public class Flock : MonoBehaviour
     {
         //seta o limite para os peixes ficarem na posição cetada
         Bounds b = new Bounds(myManager.transform.position, myManager.swinLimits * 2);
-        //caso 
+        //cria o raycast para evitar a colisão com o pilar
+        RaycastHit hit = new RaycastHit();
+        //cria a direção que o objeto vai
+        Vector3 direction = myManager.transform.position - transform.position;
+        //*faz o calculo para não bater no pilar
         if (!b.Contains(transform.position))
         {
             turning = true;
+            direction = myManager.transform.position - transform.position;
         }
-        else
-            turning = false;
-        //caso seja true
+        //utiliza o raycast para impedir que os peixes colidão com o pilar
+        else if (Physics.Raycast(transform.position, this.transform.forward * 50, out hit))
+        {
+            turning = true;
+            //faz os peixes refletirem
+            direction = Vector3.Reflect(this.transform.forward, hit.normal);
+        }
+        else turning = false;
+        //*
         if (turning)
         {
-            //faz o a movimentação
-            Vector3 direction = myManager.transform.position - transform.position;
             //faz a rotação ser suave
             transform.rotation = Quaternion.Slerp(transform.rotation, 
                 Quaternion.LookRotation(direction), 
@@ -43,7 +52,7 @@ public class Flock : MonoBehaviour
             //caso seja menor que 10
             if (Random.Range(0,100)<10)
             {
-                //pega avelocidade minima e maxima
+                //pega a velocidade minima e maxima
                 speed = Random.Range(myManager.minSpeed, myManager.maxSpeed);
             }
             //caso seja menor que 20

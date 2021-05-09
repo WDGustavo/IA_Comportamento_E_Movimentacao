@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlockingManager : MonoBehaviour
+public class FlockManager : MonoBehaviour
 {
     //prefab do objeto que vai chamar e instanciar
     public GameObject fishPrefab;
